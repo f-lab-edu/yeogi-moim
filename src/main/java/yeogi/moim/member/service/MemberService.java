@@ -3,13 +3,15 @@ package yeogi.moim.member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import yeogi.moim.member.dto.MemberRequestDto;
-import yeogi.moim.member.dto.MemberResponseDto;
+import org.springframework.transaction.annotation.Transactional;
+import yeogi.moim.member.dto.MemberRequest;
+import yeogi.moim.member.dto.MemberResponse;
 import yeogi.moim.member.entity.Member;
 import yeogi.moim.member.repository.MemberRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,34 +20,34 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public MemberResponseDto registerMember(MemberRequestDto memberRequestDto) {
+    @Transactional
+    public MemberResponse registerMember(MemberRequest memberRequest) {
+        memberRequest.validate();
 
-        String password = passwordEncoder.encode(memberRequestDto.getPassword());
+        String encodedPassword = memberRequest.getEncodedPassword(passwordEncoder);
 
         Member member = new Member(
-                memberRequestDto.getEmail(),
-                memberRequestDto.getUsername(),
-                password
+                memberRequest.getEmail(),
+                memberRequest.getUsername(),
+                encodedPassword
         );
         memberRepository.save(member);
 
-        return new MemberResponseDto(member);
+        return MemberResponse.from(member);
     }
 
-    public List<MemberResponseDto> getMemberList() {
-        List<Member> members = memberRepository.findAll();
-        List<MemberResponseDto> memberResponseDtoList = new ArrayList<>();
-
-        for (Member member : members) {
-            memberResponseDtoList.add(new MemberResponseDto(member));
-        }
-        return memberResponseDtoList;
+    @Transactional(readOnly = true)
+    public List<MemberResponse> getMemberList() {
+        return memberRepository.findAll().stream()
+                .map(MemberResponse::from)
+                .collect(Collectors.toList());
     }
 
-    public MemberResponseDto getMember(Long id) {
+    @Transactional(readOnly = true)
+    public MemberResponse getMember(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Member not found")
         );
-        return new MemberResponseDto(member);
+        return MemberResponse.from(member);
     }
 }
