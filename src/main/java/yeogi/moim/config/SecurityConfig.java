@@ -1,24 +1,22 @@
 package yeogi.moim.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import yeogi.moim.member.entity.Member;
-import yeogi.moim.member.repository.MemberRepository;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.ArrayList;
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
+
+    public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -28,7 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                  */
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/api/member", "/api/auth/signup").permitAll()
+                        .requestMatchers("/", "/csrf", "/api/members", "/api/auth/signup").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin
@@ -51,7 +49,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .maximumSessions(1) // 세션을 하나만 허용 -> 동시 접속 방지
-                );
+                )
+                .userDetailsService(userDetailsServiceImpl);
 
         return http.build();
     }
@@ -60,15 +59,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Bean
-    public UserDetailsService userDetailsService(MemberRepository memberRepository) {
-        return email -> {
-            Member member = memberRepository.findByEmail(email).orElseThrow(
-                    () -> new UsernameNotFoundException("Email " + email + " not found")
-            );
-            return new org.springframework.security.core.userdetails.User(member.getEmail(), member.getPassword(), new ArrayList<>());
-        };
-    }
 }
-
