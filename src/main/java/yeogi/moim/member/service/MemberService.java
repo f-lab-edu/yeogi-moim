@@ -1,5 +1,6 @@
 package yeogi.moim.member.service;
 
+import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import yeogi.moim.member.dto.MemberResponse;
 import yeogi.moim.member.entity.Member;
 import yeogi.moim.member.repository.MemberRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,18 +22,18 @@ public class MemberService {
 
     @Transactional
     public MemberResponse registerMember(MemberRequest memberRequest) {
-        memberRequest.validate();
+        validate(memberRequest);
 
-        String encodedPassword = memberRequest.getEncodedPassword(passwordEncoder);
+        Member member = memberRequest.toEntity(passwordEncoder);
 
-        Member member = new Member(
-                memberRequest.getEmail(),
-                memberRequest.getUsername(),
-                encodedPassword
-        );
         memberRepository.save(member);
 
         return MemberResponse.from(member);
+    }
+
+    private static void validate(MemberRequest memberRequest) {
+        Preconditions.checkNotNull(memberRequest.getUsername(), memberRequest.getEmail(), memberRequest.getPassword());
+        Preconditions.checkArgument(memberRequest.getEmail().contains("@"), "Invalid email");
     }
 
     @Transactional(readOnly = true)
