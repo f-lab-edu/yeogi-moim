@@ -5,6 +5,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yeogi.moim.common.BaseTimeEntity;
+import yeogi.moim.gathering.entity.Gathering;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,6 +28,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(mappedBy = "member")
+    private List<Gathering> gatheringList = new ArrayList<>();
 
     public Member(String email, String username, String password) {
         this.email = email;
