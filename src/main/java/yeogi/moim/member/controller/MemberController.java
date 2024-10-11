@@ -1,8 +1,6 @@
 package yeogi.moim.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import yeogi.moim.member.dto.MemberRequest;
 import yeogi.moim.member.dto.MemberResponse;
@@ -19,19 +17,17 @@ public class MemberController {
 
     @PostMapping
     public MemberResponse registerMember(@RequestBody MemberRequest memberRequest) {
-        MemberResponse memberResponse = memberService.registerMember(memberRequest);
-        return memberResponse;
+        return memberService.registerMember(memberRequest);
     }
 
     @GetMapping
-    public ResponseEntity<List<MemberResponse>> getMemberList() {
-        List<MemberResponse> memberResponseList = memberService.getMemberList();
-        return new ResponseEntity<>(memberResponseList, HttpStatus.OK);
+    public List<MemberResponse> getMemberList() {
+        return memberService.getMemberList();
     }
 
-    @GetMapping("/{memberId}")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable Long memberId) {
-        MemberResponse memberResponse = memberService.getMember(memberId);
-        return new ResponseEntity<>(memberResponse, HttpStatus.OK);
+    @GetMapping("/{id}")
+    public MemberResponse getMember(@PathVariable Long id) {
+        return memberService.getMember(id);
+
     }
 }
