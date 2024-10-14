@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yeogi.moim.common.BaseTimeEntity;
 import yeogi.moim.member.entity.Member;
+import yeogi.moim.participant.entity.Participant;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -29,16 +33,14 @@ public class Gathering extends BaseTimeEntity {
     @Column(name = "currentPersonnel")
     private int currentPersonnel;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId")
-    private Member member;
+    @OneToMany(mappedBy = "gathering")
+    private List<Participant> participantList = new ArrayList<>();
 
-    public Gathering(String title, String description, int totalPersonnel, int currentPersonnel, Member member) {
+    public Gathering(String title, String description, int totalPersonnel, int currentPersonnel) {
         this.title = title;
         this.description = description;
         this.totalPersonnel = totalPersonnel;
         this.currentPersonnel = currentPersonnel;
-        this.member = member;
     }
 
     public void update(String title, String description, int totalPersonnel) {

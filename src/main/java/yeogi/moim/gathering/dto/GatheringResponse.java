@@ -11,16 +11,14 @@ public class GatheringResponse {
     private String description;
     private int totalPersonnel;
     private int currentPersonnel;
-    private Long memberId;
 
     @Builder
-    public GatheringResponse(Long id, String title, String description, int totalPersonnel, int currentPersonnel, Long memberId) {
+    public GatheringResponse(Long id, String title, String description, int totalPersonnel, int currentPersonnel) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.totalPersonnel = totalPersonnel;
         this.currentPersonnel = currentPersonnel;
-        this.memberId = memberId;
     }
 
     public static GatheringResponse from(Gathering gathering) {
@@ -30,7 +28,6 @@ public class GatheringResponse {
                 .description(gathering.getDescription())
                 .totalPersonnel(gathering.getTotalPersonnel())
                 .currentPersonnel(gathering.getCurrentPersonnel())
-                .memberId(gathering.getMember().getId())
                 .build();
     }
 }

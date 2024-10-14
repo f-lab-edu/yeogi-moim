@@ -6,8 +6,6 @@ import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
 import yeogi.moim.gathering.entity.Gathering;
 import yeogi.moim.gathering.repository.GatheringRepository;
-import yeogi.moim.member.entity.Member;
-import yeogi.moim.member.repository.MemberRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,21 +14,14 @@ import java.util.stream.Collectors;
 public class GatheringService {
 
     private final GatheringRepository gatheringRepository;
-    private final MemberRepository memberRepository;
 
-    public GatheringService(GatheringRepository gatheringRepository, MemberRepository memberRepository) {
+    public GatheringService(GatheringRepository gatheringRepository) {
         this.gatheringRepository = gatheringRepository;
-        this.memberRepository = memberRepository;
     }
 
     @Transactional
     public GatheringResponse registerGathering(GatheringRequest gatheringRequest) {
-
-        Member member = memberRepository.findById(gatheringRequest.getMemberId()).orElseThrow(
-                () -> new IllegalArgumentException("Member not found")
-        );
-
-        Gathering gathering = gatheringRequest.toEntity(member);
+        Gathering gathering = gatheringRequest.toEntity();
 
         gatheringRepository.save(gathering);
 
