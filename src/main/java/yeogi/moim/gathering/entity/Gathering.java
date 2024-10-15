@@ -21,24 +21,28 @@ public class Gathering extends BaseTimeEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "totalPersonnel")
+    @Column(name = "totalPersonnel", nullable = false)
     private int totalPersonnel;
 
     @Column(name = "currentPersonnel")
     private int currentPersonnel;
 
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
     @OneToMany(mappedBy = "gathering")
     private List<Participant> participantList = new ArrayList<>();
 
-    public Gathering(String title, String description, int totalPersonnel, int currentPersonnel) {
+    public Gathering(String title, String description, Category category, int totalPersonnel, int currentPersonnel) {
         this.title = title;
         this.description = description;
+        this.category = category;
         this.totalPersonnel = totalPersonnel;
         this.currentPersonnel = currentPersonnel;
     }
