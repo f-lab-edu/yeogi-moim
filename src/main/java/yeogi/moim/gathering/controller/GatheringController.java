@@ -4,6 +4,7 @@ package yeogi.moim.gathering.controller;
 import org.springframework.web.bind.annotation.*;
 import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
+import yeogi.moim.gathering.entity.Category;
 import yeogi.moim.gathering.service.GatheringService;
 
 import java.util.List;
@@ -32,6 +33,26 @@ public class GatheringController {
     public GatheringResponse getGathering(@PathVariable Long id) {
         return gatheringService.getGathering(id);
 
+    }
+
+    @GetMapping("/recent")
+    public List<GatheringResponse> getRecentGatheringList() {
+        return gatheringService.getRecentGatheringList();
+    }
+
+    @GetMapping("/category/{category}")
+    public List<GatheringResponse> getGatheringListByCategory(@PathVariable Category category) {
+        return gatheringService.getGatheringListByCategory(category);
+    }
+
+    @GetMapping("/available")
+    public List<GatheringResponse> getAvailableGatheringList() {
+        return gatheringService.getAvailableGatheringList();
+    }
+
+    @GetMapping("/available/category/{category}")
+    public List<GatheringResponse> getAvailableGatheringListByCategory(@PathVariable Category category) {
+        return gatheringService.getAvailableGatheringListByCategory(category);
     }
 
     @PutMapping("/{id}")

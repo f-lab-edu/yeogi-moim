@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
+import yeogi.moim.gathering.entity.Category;
 import yeogi.moim.gathering.entity.Gathering;
 import yeogi.moim.gathering.repository.GatheringRepository;
 
@@ -42,6 +43,34 @@ public class GatheringService {
         );
 
         return GatheringResponse.from(gathering);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GatheringResponse> getRecentGatheringList() {
+        return gatheringRepository.findAllByOrderByCreatedDateDesc().stream()
+                .map(GatheringResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GatheringResponse> getGatheringListByCategory(Category category) {
+        return gatheringRepository.findAllByCategory(category).stream()
+                .map(GatheringResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GatheringResponse> getAvailableGatheringListByCategory(Category category) {
+        return gatheringRepository.findAllAvailableGatheringByCategory(category).stream()
+                .map(GatheringResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<GatheringResponse> getAvailableGatheringList() {
+        return gatheringRepository.findAllAvailableGathering().stream()
+                .map(GatheringResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
