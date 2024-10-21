@@ -1,7 +1,12 @@
 package yeogi.moim.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import yeogi.moim.member.dto.MemberRequest;
 import yeogi.moim.member.dto.MemberResponse;
 import yeogi.moim.member.service.MemberService;
@@ -28,6 +33,5 @@ public class MemberController {
     @GetMapping("/{id}")
     public MemberResponse getMember(@PathVariable Long id) {
         return memberService.getMember(id);
-
     }
 }
