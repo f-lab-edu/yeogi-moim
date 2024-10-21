@@ -1,11 +1,17 @@
 package yeogi.moim.gathering.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yeogi.moim.common.BaseTimeEntity;
-import yeogi.moim.member.entity.Member;
+import yeogi.moim.common.BaseAuditableEntity;
 import yeogi.moim.participant.entity.Participant;
 
 import java.util.ArrayList;
@@ -14,7 +20,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Gathering extends BaseTimeEntity {
+public class Gathering extends BaseAuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +34,10 @@ public class Gathering extends BaseTimeEntity {
     private String description;
 
     @Column(name = "totalPersonnel", nullable = false)
-    private int totalPersonnel;
+    private Integer totalPersonnel;
 
     @Column(name = "currentPersonnel")
-    private int currentPersonnel;
+    private Integer currentPersonnel;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -39,7 +45,7 @@ public class Gathering extends BaseTimeEntity {
     @OneToMany(mappedBy = "gathering")
     private List<Participant> participantList = new ArrayList<>();
 
-    public Gathering(String title, String description, Category category, int totalPersonnel, int currentPersonnel) {
+    public Gathering(String title, String description, Category category, Integer totalPersonnel, Integer currentPersonnel) {
         this.title = title;
         this.description = description;
         this.category = category;
@@ -47,7 +53,7 @@ public class Gathering extends BaseTimeEntity {
         this.currentPersonnel = currentPersonnel;
     }
 
-    public void update(String title, String description, int totalPersonnel) {
+    public void update(String title, String description, Integer totalPersonnel) {
         this.title = title;
         this.description = description;
         this.totalPersonnel = totalPersonnel;
