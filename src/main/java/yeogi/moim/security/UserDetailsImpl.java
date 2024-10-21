@@ -1,4 +1,4 @@
-package yeogi.moim.config;
+package yeogi.moim.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
