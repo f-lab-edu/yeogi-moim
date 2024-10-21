@@ -9,7 +9,7 @@ public class GatheringRequest {
     private String title;
     private String description;
     private Category category;
-    private int totalPersonnel;
+    private Integer totalPersonnel;
 
     public Gathering toEntity() {
         return new Gathering(

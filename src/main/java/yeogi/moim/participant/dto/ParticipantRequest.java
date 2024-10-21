@@ -19,7 +19,7 @@ public class ParticipantRequest {
                 member,
                 gathering,
                 role,
-                0
+                0.0
         );
     }
 }

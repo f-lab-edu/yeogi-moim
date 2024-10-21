@@ -1,7 +1,15 @@
 package yeogi.moim.participant.entity;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,9 +39,9 @@ public class Participant extends BaseTimeEntity {
     private Role role;
 
     @Column(name = "rating")
-    private double rating;
+    private Double rating;
 
-    public Participant(Member member, Gathering gathering, Role role, double rating) {
+    public Participant(Member member, Gathering gathering, Role role, Double rating) {
         this.member = member;
         this.gathering = gathering;
         this.role = role;

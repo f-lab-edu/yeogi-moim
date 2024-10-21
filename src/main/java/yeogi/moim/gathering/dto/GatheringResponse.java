@@ -11,11 +11,11 @@ public class GatheringResponse {
     private String title;
     private String description;
     private Category category;
-    private int totalPersonnel;
-    private int currentPersonnel;
+    private Integer totalPersonnel;
+    private Integer currentPersonnel;
 
     @Builder
-    public GatheringResponse(Long id, String title, Category category, String description, int totalPersonnel, int currentPersonnel) {
+    public GatheringResponse(Long id, String title, Category category, String description, Integer totalPersonnel, Integer currentPersonnel) {
         this.id = id;
         this.title = title;
         this.description = description;

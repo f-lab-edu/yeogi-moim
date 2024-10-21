@@ -11,10 +11,10 @@ public class ParticipantResponse {
     private Long memberId;
     private Long gatheringId;
     private Role role;
-    private double rating;
+    private Double rating;
 
     @Builder
-    public ParticipantResponse(Long id, Long memberId, Long gatheringId, Role role, double rating) {
+    public ParticipantResponse(Long id, Long memberId, Long gatheringId, Role role, Double rating) {
         this.id = id;
         this.memberId = memberId;
         this.gatheringId = gatheringId;
