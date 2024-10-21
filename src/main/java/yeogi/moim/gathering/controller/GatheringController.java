@@ -1,7 +1,15 @@
 package yeogi.moim.gathering.controller;
 
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
 import yeogi.moim.gathering.entity.Category;
@@ -35,24 +43,14 @@ public class GatheringController {
 
     }
 
-    @GetMapping("/recent")
-    public List<GatheringResponse> getRecentGatheringList() {
-        return gatheringService.getRecentGatheringList();
-    }
+    @GetMapping("/search")
+    public List<GatheringResponse> searchGatheringList(
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) Boolean available,
+            @RequestParam(required = false) boolean recent
+    ) {
+        return gatheringService.searchGatheringList(category, available, recent);
 
-    @GetMapping("/category/{category}")
-    public List<GatheringResponse> getGatheringListByCategory(@PathVariable Category category) {
-        return gatheringService.getGatheringListByCategory(category);
-    }
-
-    @GetMapping("/available")
-    public List<GatheringResponse> getAvailableGatheringList() {
-        return gatheringService.getAvailableGatheringList();
-    }
-
-    @GetMapping("/available/category/{category}")
-    public List<GatheringResponse> getAvailableGatheringListByCategory(@PathVariable Category category) {
-        return gatheringService.getAvailableGatheringListByCategory(category);
     }
 
     @PutMapping("/{id}")

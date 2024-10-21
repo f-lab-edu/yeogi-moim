@@ -37,45 +37,23 @@ public class GatheringService {
     }
 
     @Transactional(readOnly = true)
-    public GatheringResponse getGathering(Long groupId) {
-        Gathering gathering = gatheringRepository.findById(groupId).orElseThrow(
+    public GatheringResponse getGathering(Long id) {
+        Gathering gathering = gatheringRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Group not found")
         );
 
         return GatheringResponse.from(gathering);
     }
 
-    @Transactional(readOnly = true)
-    public List<GatheringResponse> getRecentGatheringList() {
-        return gatheringRepository.findAllByOrderByCreatedDateDesc().stream()
-                .map(GatheringResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<GatheringResponse> getGatheringListByCategory(Category category) {
-        return gatheringRepository.findAllByCategory(category).stream()
-                .map(GatheringResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<GatheringResponse> getAvailableGatheringListByCategory(Category category) {
-        return gatheringRepository.findAllAvailableGatheringByCategory(category).stream()
-                .map(GatheringResponse::from)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<GatheringResponse> getAvailableGatheringList() {
-        return gatheringRepository.findAllAvailableGathering().stream()
+    public List<GatheringResponse> searchGatheringList(Category category, Boolean available, boolean recent) {
+        return gatheringRepository.searchGatheringList(category, available, recent).stream()
                 .map(GatheringResponse::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public GatheringResponse updateGathering(Long groupId, GatheringRequest gatheringRequest) {
-        Gathering gathering = gatheringRepository.findById(groupId).orElseThrow(
+    public GatheringResponse updateGathering(Long id, GatheringRequest gatheringRequest) {
+        Gathering gathering = gatheringRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Group not found")
         );
 
@@ -85,13 +63,11 @@ public class GatheringService {
                 gatheringRequest.getTotalPersonnel()
         );
 
-        gatheringRepository.save(gathering);
-
         return GatheringResponse.from(gathering);
     }
 
     @Transactional
-    public void deleteGathering(Long groupId) {
-        gatheringRepository.deleteById(groupId);
+    public void deleteGathering(Long id) {
+        gatheringRepository.deleteById(id);
     }
 }
