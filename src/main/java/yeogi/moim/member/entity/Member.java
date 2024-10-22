@@ -1,10 +1,19 @@
 package yeogi.moim.member.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yeogi.moim.common.BaseTimeEntity;
+import yeogi.moim.participant.entity.Participant;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,6 +33,9 @@ public class Member extends BaseTimeEntity {
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(mappedBy = "member")
+    private List<Participant> participantList = new ArrayList<>();
 
     public Member(String email, String username, String password) {
         this.email = email;
