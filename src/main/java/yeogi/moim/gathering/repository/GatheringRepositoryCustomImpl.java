@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
+import yeogi.moim.gathering.dto.SearchGatheringRequest;
 import yeogi.moim.gathering.entity.Category;
 import yeogi.moim.gathering.entity.Gathering;
 
@@ -22,12 +23,12 @@ public class GatheringRepositoryCustomImpl implements GatheringRepositoryCustom 
     }
 
     @Override
-    public List<Gathering> searchGatheringList(Category category, Boolean available, boolean recent) {
+    public List<Gathering> searchGatheringList(SearchGatheringRequest searchGatheringRequest) {
         return queryFactory
                 .selectFrom(gathering)
-                .where(categoryEq(category),
-                        availableGathering(available))
-                .orderBy(recentOrder(recent))
+                .where(categoryEq(searchGatheringRequest.getCategory()),
+                        availableGathering(searchGatheringRequest.getAvailable()))
+                .orderBy(recentOrder(searchGatheringRequest.isOrderBy()))
                 .fetch();
     }
 

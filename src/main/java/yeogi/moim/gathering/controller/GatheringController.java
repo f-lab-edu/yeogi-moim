@@ -8,11 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
-import yeogi.moim.gathering.entity.Category;
+import yeogi.moim.gathering.dto.SearchGatheringRequest;
 import yeogi.moim.gathering.service.GatheringService;
 
 import java.util.List;
@@ -43,13 +42,9 @@ public class GatheringController {
 
     }
 
-    @GetMapping("/search")
-    public List<GatheringResponse> searchGatheringList(
-            @RequestParam(required = false) Category category,
-            @RequestParam(required = false) Boolean available,
-            @RequestParam(required = false) boolean recent
-    ) {
-        return gatheringService.searchGatheringList(category, available, recent);
+    @PostMapping("/search")
+    public List<GatheringResponse> searchGatheringList(@RequestBody SearchGatheringRequest searchGatheringRequest) {
+        return gatheringService.searchGatheringList(searchGatheringRequest);
 
     }
 

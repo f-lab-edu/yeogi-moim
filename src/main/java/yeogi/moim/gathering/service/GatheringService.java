@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
-import yeogi.moim.gathering.entity.Category;
+import yeogi.moim.gathering.dto.SearchGatheringRequest;
 import yeogi.moim.gathering.entity.Gathering;
 import yeogi.moim.gathering.repository.GatheringRepository;
 
@@ -45,8 +45,8 @@ public class GatheringService {
         return GatheringResponse.from(gathering);
     }
 
-    public List<GatheringResponse> searchGatheringList(Category category, Boolean available, boolean recent) {
-        return gatheringRepository.searchGatheringList(category, available, recent).stream()
+    public List<GatheringResponse> searchGatheringList(SearchGatheringRequest searchGatheringRequest) {
+        return gatheringRepository.searchGatheringList(searchGatheringRequest).stream()
                 .map(GatheringResponse::from)
                 .collect(Collectors.toList());
     }
