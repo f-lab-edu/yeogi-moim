@@ -3,9 +3,9 @@ package yeogi.moim.participant.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yeogi.moim.gathering.entity.Gathering;
-import yeogi.moim.gathering.repository.GatheringRepository;
+import yeogi.moim.gathering.service.GatheringService;
 import yeogi.moim.member.entity.Member;
-import yeogi.moim.member.repository.MemberRepository;
+import yeogi.moim.member.service.MemberService;
 import yeogi.moim.participant.dto.ParticipantRequest;
 import yeogi.moim.participant.dto.ParticipantResponse;
 import yeogi.moim.participant.entity.Participant;
@@ -18,25 +18,21 @@ import java.util.stream.Collectors;
 public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
-    private final MemberRepository memberRepository;
-    private final GatheringRepository gatheringRepository;
+    private final MemberService memberService;
+    private final GatheringService gatheringService;
 
-    public ParticipantService(ParticipantRepository participantRepository, MemberRepository memberRepository, GatheringRepository gatheringRepository) {
+    public ParticipantService(ParticipantRepository participantRepository, MemberService memberService, GatheringService gatheringService) {
         this.participantRepository = participantRepository;
-        this.memberRepository = memberRepository;
-        this.gatheringRepository = gatheringRepository;
+        this.memberService = memberService;
+        this.gatheringService = gatheringService;
     }
 
     @Transactional
     public ParticipantResponse registerParticipant(ParticipantRequest participantRequest) {
-        Member member = memberRepository.findById(participantRequest.getMemberId()).orElseThrow(
-                () -> new IllegalArgumentException("Member not found")
-        );
-        Gathering gathering = gatheringRepository.findById(participantRequest.getGatheringId()).orElseThrow(
-                () -> new IllegalArgumentException("Gathering not found")
-        );
+        memberService.getMemberEntity(participantRequest.getMemberId());
+        gatheringService.getGatheringEntity(participantRequest.getGatheringId());
 
-        Participant participant = participantRequest.toEntity(member, gathering);
+        Participant participant = participantRequest.toEntity();
 
         participantRepository.save(participant);
 
