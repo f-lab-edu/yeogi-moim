@@ -13,14 +13,14 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yeogi.moim.common.BaseTimeEntity;
 import yeogi.moim.gathering.entity.Gathering;
 import yeogi.moim.member.entity.Member;
+import yeogi.moim.common.BaseEntity;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Participant extends BaseTimeEntity {
+public class Participant extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

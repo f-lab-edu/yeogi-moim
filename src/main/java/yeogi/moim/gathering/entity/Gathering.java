@@ -11,16 +11,16 @@ import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yeogi.moim.common.BaseAuditableEntity;
 import yeogi.moim.participant.entity.Participant;
 
 import java.util.ArrayList;
 import java.util.List;
+import yeogi.moim.common.BaseEntity;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Gathering extends BaseAuditableEntity {
+public class Gathering extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,10 +33,10 @@ public class Gathering extends BaseAuditableEntity {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "totalPersonnel", nullable = false)
+    @Column(name = "total_personnel", nullable = false)
     private Integer totalPersonnel;
 
-    @Column(name = "currentPersonnel")
+    @Column(name = "current_personnel")
     private Integer currentPersonnel;
 
     @Enumerated(EnumType.STRING)
