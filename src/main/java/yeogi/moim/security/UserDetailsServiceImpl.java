@@ -24,6 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("Email에 해당하는 계정이 존재하지 않습니다.")
         );
-        return new User(member.getEmail(), member.getPassword(), new ArrayList<>());
+        return new UserDetailsImpl(member);
     }
 }

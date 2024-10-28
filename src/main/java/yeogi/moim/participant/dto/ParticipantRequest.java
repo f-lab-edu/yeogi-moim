@@ -14,10 +14,10 @@ public class ParticipantRequest {
     private Role role;
 
 
-    public Participant toEntity(Member member, Gathering gathering) {
+    public Participant toEntity() {
         return new Participant(
-                member,
-                gathering,
+                memberId,
+                gatheringId,
                 role,
                 0.0
         );

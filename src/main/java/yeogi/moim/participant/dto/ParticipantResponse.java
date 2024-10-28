@@ -25,8 +25,8 @@ public class ParticipantResponse {
     public static ParticipantResponse from(Participant participant) {
         return ParticipantResponse.builder()
                 .id(participant.getId())
-                .memberId(participant.getMember().getId())
-                .gatheringId(participant.getGathering().getId())
+                .memberId(participant.getMemberId())
+                .gatheringId(participant.getGatheringId())
                 .role(participant.getRole())
                 .rating(participant.getRating())
                 .build();

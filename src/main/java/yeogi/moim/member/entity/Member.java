@@ -5,14 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yeogi.moim.participant.entity.Participant;
-
-import java.util.ArrayList;
-import java.util.List;
 import yeogi.moim.common.BaseEntity;
 
 @Entity(name = "member")
@@ -33,9 +28,6 @@ public class Member extends BaseEntity {
 
     @Column(name = "password")
     private String password;
-
-    @OneToMany(mappedBy = "member")
-    private List<Participant> participantList = new ArrayList<>();
 
     public Member(String email, String username, String password) {
         this.email = email;

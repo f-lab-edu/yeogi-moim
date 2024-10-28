@@ -7,14 +7,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import yeogi.moim.participant.entity.Participant;
-
-import java.util.ArrayList;
-import java.util.List;
 import yeogi.moim.common.BaseEntity;
 
 @Entity
@@ -41,9 +36,6 @@ public class Gathering extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Category category;
-
-    @OneToMany(mappedBy = "gathering")
-    private List<Participant> participantList = new ArrayList<>();
 
     public Gathering(String title, String description, Category category, Integer totalPersonnel, Integer currentPersonnel) {
         this.title = title;
