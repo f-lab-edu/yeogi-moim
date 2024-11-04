@@ -11,8 +11,9 @@ public class GatheringRequest {
     private Category category;
     private Integer totalPersonnel;
 
-    public Gathering toEntity() {
+    public Gathering toEntity(Long ownerId) {
         return new Gathering(
+                ownerId,
                 title,
                 description,
                 category,

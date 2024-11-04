@@ -22,6 +22,9 @@ public class Gathering extends BaseEntity {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "owner_id")
+    private Long ownerId;
+
     @Column(name = "title", nullable = false)
     private String title;
 
