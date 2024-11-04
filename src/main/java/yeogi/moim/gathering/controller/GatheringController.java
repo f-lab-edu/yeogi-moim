@@ -13,6 +13,7 @@ import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
 import yeogi.moim.gathering.dto.SearchGatheringRequest;
 import yeogi.moim.gathering.service.GatheringService;
+import yeogi.moim.gathering.service.RegisterGatheringService;
 
 import java.util.List;
 
@@ -21,14 +22,16 @@ import java.util.List;
 public class GatheringController {
 
     private final GatheringService gatheringService;
+    private final RegisterGatheringService registerGatheringService;
 
-    public GatheringController(GatheringService gatheringService) {
+    public GatheringController(GatheringService gatheringService, RegisterGatheringService registerGatheringService) {
         this.gatheringService = gatheringService;
+        this.registerGatheringService = registerGatheringService;
     }
 
     @PostMapping
     public GatheringResponse registerGathering(@RequestBody GatheringRequest gatheringRequest) {
-        return gatheringService.registerGathering(gatheringRequest);
+        return registerGatheringService.registerGathering(gatheringRequest);
     }
 
     @GetMapping
