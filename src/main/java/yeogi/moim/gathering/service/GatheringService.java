@@ -69,6 +69,19 @@ public class GatheringService {
     }
 
     @Transactional
+    public void joinGatheringForMember(Long gatheringId) {
+        Gathering gathering = gatheringRepository.findById(gatheringId).orElseThrow(
+                () -> new IllegalArgumentException("모임이 존재하지 않습니다")
+        );
+
+        if (gathering.getTotalPersonnel() <= gathering.getCurrentPersonnel()) {
+            throw new IllegalArgumentException("인원 초과로 인해 해당 모임에는 더 이상 참여할 수 없습니다.");
+        }
+
+        gathering.incrementCurrentPersonnel();
+    }
+
+    @Transactional
     public void deleteGathering(Long id) {
         gatheringRepository.deleteById(id);
     }

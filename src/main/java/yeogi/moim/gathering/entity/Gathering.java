@@ -64,5 +64,13 @@ public class Gathering extends BaseEntity {
         }
     }
 
+    public void incrementCurrentPersonnel() {
+        this.currentPersonnel += 1;
+    }
+
+    public void decrementCurrentPersonnel() {
+        if (this.currentPersonnel > 1) {
+            this.currentPersonnel -= 1;
+        }
     }
 }
