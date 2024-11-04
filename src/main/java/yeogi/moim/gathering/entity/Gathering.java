@@ -40,7 +40,8 @@ public class Gathering extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    public Gathering(String title, String description, Category category, Integer totalPersonnel, Integer currentPersonnel) {
+    public Gathering(Long ownerId, String title, String description, Category category, Integer totalPersonnel, Integer currentPersonnel) {
+        this.ownerId = ownerId;
         this.title = title;
         this.description = description;
         this.category = category;
@@ -48,9 +49,20 @@ public class Gathering extends BaseEntity {
         this.currentPersonnel = currentPersonnel;
     }
 
-    public void update(String title, String description, Integer totalPersonnel) {
-        this.title = title;
-        this.description = description;
-        this.totalPersonnel = totalPersonnel;
+    public void update(String title, String description, Integer totalPersonnel, Category category) {
+        if (title != null && !title.trim().isEmpty()) {
+            this.title = title;
+        }
+        if (description != null && !description.trim().isEmpty()) {
+            this.description = description;
+        }
+        if (totalPersonnel != null) {
+            this.totalPersonnel = totalPersonnel;
+        }
+        if (category != null) {
+            this.category = category;
+        }
+    }
+
     }
 }
