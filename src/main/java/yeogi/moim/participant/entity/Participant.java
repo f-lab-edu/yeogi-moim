@@ -41,4 +41,8 @@ public class Participant extends BaseEntity {
         this.role = role;
         this.rating = rating;
     }
+
+    public static Participant ofLeader(Long memberId, Long gatheringId) {
+        return new Participant(memberId, gatheringId, Role.LEADER, 0.0);
+    }
 }
