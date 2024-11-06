@@ -39,6 +39,7 @@ public class GatheringService {
         return GatheringResponse.from(gathering);
     }
 
+    @Transactional
     public List<GatheringResponse> searchGatheringList(SearchGatheringRequest searchGatheringRequest) {
         return gatheringRepository.searchGatheringList(searchGatheringRequest).stream()
                 .map(GatheringResponse::from)
