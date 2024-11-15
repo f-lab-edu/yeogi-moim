@@ -23,6 +23,15 @@ public class GatheringService {
         this.authenticationService = authenticationService;
     }
 
+    @Transactional
+    public Gathering registerGathering(GatheringRequest gatheringRequest, Long gatheringOwnerId) {
+        Gathering gathering = gatheringRequest.toEntity(gatheringOwnerId);
+
+        gatheringRepository.save(gathering);
+
+        return gathering;
+    }
+
     @Transactional(readOnly = true)
     public List<GatheringResponse> getGatheringList() {
         return gatheringRepository.findAll().stream()

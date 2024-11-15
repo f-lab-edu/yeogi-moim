@@ -15,12 +15,15 @@ public class RegisterGatheringService {
 
     private final MemberService memberService;
     private final ParticipantService participantService;
+    private final GatheringService gatheringService;
     private final AuthenticationService authenticationService;
     private final GatheringRepository gatheringRepository;
 
-    public RegisterGatheringService(MemberService memberService, ParticipantService participantService, AuthenticationService authenticationService, GatheringRepository gatheringRepository) {
+
+    public RegisterGatheringService(MemberService memberService, ParticipantService participantService, GatheringService gatheringService, AuthenticationService authenticationService, GatheringRepository gatheringRepository) {
         this.memberService = memberService;
         this.participantService = participantService;
+        this.gatheringService = gatheringService;
         this.authenticationService = authenticationService;
         this.gatheringRepository = gatheringRepository;
     }
@@ -30,8 +33,7 @@ public class RegisterGatheringService {
         Long memberId = authenticationService.getAuthenticatedMemberId();
         memberService.getMember(memberId);
 
-        Gathering gathering = gatheringRequest.toEntity(memberId);
-        gatheringRepository.save(gathering);
+        Gathering gathering = gatheringService.registerGathering(gatheringRequest, memberId);
 
         participantService.registerLeaderParticipant(memberId, gathering.getId());
 
