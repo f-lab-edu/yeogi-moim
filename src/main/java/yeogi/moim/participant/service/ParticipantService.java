@@ -54,10 +54,6 @@ public class ParticipantService {
             throw new IllegalArgumentException("가입 승인을 하려는 사용자와 모임에 참여하려는 사용자가 일치합니다.");
         }
 
-        else if (gatheringResponse.getTotalPersonnel() <= gatheringResponse.getCurrentPersonnel()) {
-            throw new IllegalArgumentException("모임의 정원이 꽉 차 참여할 수 없는 모임입니다.");
-        }
-
         memberService.getMember(memberId);
         memberService.getMember(participantRequest.getMemberId());
 

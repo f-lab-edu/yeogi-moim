@@ -50,18 +50,10 @@ public class Gathering extends BaseEntity {
     }
 
     public void update(String title, String description, Integer totalPersonnel, Category category) {
-        if (title != null && !title.trim().isEmpty()) {
-            this.title = title;
-        }
-        if (description != null && !description.trim().isEmpty()) {
-            this.description = description;
-        }
-        if (totalPersonnel != null) {
-            this.totalPersonnel = totalPersonnel;
-        }
-        if (category != null) {
-            this.category = category;
-        }
+        this.title = title;
+        this.description = description;
+        this.totalPersonnel = totalPersonnel;
+        this.category = category;
     }
 
     public void incrementCurrentPersonnel() {
