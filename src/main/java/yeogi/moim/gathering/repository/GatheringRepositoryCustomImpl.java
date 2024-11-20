@@ -5,12 +5,17 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
+import yeogi.moim.favorite.entity.QFavorite;
+import yeogi.moim.gathering.dto.SearchGatheringRequest;
 import yeogi.moim.gathering.entity.Category;
 import yeogi.moim.gathering.entity.Gathering;
+import yeogi.moim.review.entity.QReview;
 
 import java.util.List;
 
+import static yeogi.moim.favorite.entity.QFavorite.favorite;
 import static yeogi.moim.gathering.entity.QGathering.gathering;
+import static yeogi.moim.review.entity.QReview.review;
 
 @Repository
 public class GatheringRepositoryCustomImpl implements GatheringRepositoryCustom {
@@ -22,12 +27,21 @@ public class GatheringRepositoryCustomImpl implements GatheringRepositoryCustom 
     }
 
     @Override
-    public List<Gathering> searchGatheringList(Category category, Boolean available, boolean recent) {
+    public List<Gathering> searchGatheringList(SearchGatheringRequest searchGatheringRequest) {
         return queryFactory
                 .selectFrom(gathering)
-                .where(categoryEq(category),
-                        availableGathering(available))
-                .orderBy(recentOrder(recent))
+                .leftJoin(favorite).on(favorite.gatheringId.eq(gathering.id))
+                .leftJoin(review).on(review.gatheringId.eq(gathering.id))
+                .where(
+                        categoryEq(searchGatheringRequest.getFilterCondition().getCategory()),
+                        availableGathering(searchGatheringRequest.getFilterCondition().getAvailable())
+                )
+                .groupBy(gathering.id)
+                .orderBy(
+                        orderByCondition(
+                                searchGatheringRequest.getSortCondition()
+                        )
+                )
                 .fetch();
     }
 
@@ -36,11 +50,33 @@ public class GatheringRepositoryCustomImpl implements GatheringRepositoryCustom 
     }
 
     private BooleanExpression availableGathering(Boolean available) {
-        return Boolean.TRUE.equals(available) ? gathering.totalPersonnel.ne(gathering.currentPersonnel) : null;
+        if (Boolean.TRUE.equals(available)) {
+            return gathering.totalPersonnel.ne(gathering.currentPersonnel);
+        }
+        else if (Boolean.FALSE.equals(available)) {
+            return gathering.totalPersonnel.eq(gathering.currentPersonnel);
+        }
+        return null;
     }
 
-    private OrderSpecifier<?> recentOrder(boolean recent) {
-        return recent ? gathering.createdDate.desc() : gathering.createdDate.asc();
+    private OrderSpecifier<?> orderByCondition(SearchGatheringRequest.SortCondition sortCondition) {
+        if ("favorite".equals(sortCondition.getSortBy())) {
+            return sortCondition.isDescending() ? QFavorite.favorite.count().desc() : QFavorite.favorite.count().asc();
+        }
+        else if ("review".equals(sortCondition.getSortBy())) {
+            return sortCondition.isDescending() ? QReview.review.count().desc() : QReview.review.count().asc();
+        }
+        else if ("title".equals(sortCondition.getSortBy())) {
+            return sortCondition.isDescending() ? gathering.title.desc() : gathering.title.asc();
+        }
+        else if ("personnel".equals(sortCondition.getSortBy())) {
+            return sortCondition.isDescending() ? gathering.currentPersonnel.desc() : gathering.currentPersonnel.asc();
+        }
+        else if ("createdDate".equals(sortCondition.getSortBy())) {
+            return sortCondition.isDescending() ? gathering.createdDate.desc() : gathering.createdDate.asc();
+        }
+
+        return gathering.createdDate.asc();
     }
 
 }

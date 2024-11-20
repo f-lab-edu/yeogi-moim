@@ -1,8 +1,6 @@
 package yeogi.moim.participant.dto;
 
 import lombok.Getter;
-import yeogi.moim.gathering.entity.Gathering;
-import yeogi.moim.member.entity.Member;
 import yeogi.moim.participant.entity.Participant;
 import yeogi.moim.participant.entity.Role;
 
@@ -11,14 +9,12 @@ public class ParticipantRequest {
 
     private Long memberId;
     private Long gatheringId;
-    private Role role;
 
-
-    public Participant toEntity(Member member, Gathering gathering) {
+    public Participant toEntity() {
         return new Participant(
-                member,
-                gathering,
-                role,
+                memberId,
+                gatheringId,
+                Role.MEMBER,
                 0.0
         );
     }

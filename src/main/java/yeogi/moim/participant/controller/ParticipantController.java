@@ -24,8 +24,8 @@ public class ParticipantController {
     }
 
     @PostMapping
-    public ParticipantResponse registerParticipant(@RequestBody ParticipantRequest participantRequest) {
-        return participantService.registerParticipant(participantRequest);
+    public ParticipantResponse applyMemberParticipant(@RequestBody ParticipantRequest participantRequest) {
+        return participantService.registerMemberParticipant(participantRequest);
     }
 
     @GetMapping

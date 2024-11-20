@@ -2,10 +2,10 @@ package yeogi.moim.participant.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import yeogi.moim.gathering.entity.Gathering;
-import yeogi.moim.gathering.repository.GatheringRepository;
-import yeogi.moim.member.entity.Member;
-import yeogi.moim.member.repository.MemberRepository;
+import yeogi.moim.authentication.service.AuthenticationService;
+import yeogi.moim.gathering.dto.GatheringResponse;
+import yeogi.moim.gathering.service.GatheringService;
+import yeogi.moim.member.service.MemberService;
 import yeogi.moim.participant.dto.ParticipantRequest;
 import yeogi.moim.participant.dto.ParticipantResponse;
 import yeogi.moim.participant.entity.Participant;
@@ -18,27 +18,49 @@ import java.util.stream.Collectors;
 public class ParticipantService {
 
     private final ParticipantRepository participantRepository;
-    private final MemberRepository memberRepository;
-    private final GatheringRepository gatheringRepository;
+    private final AuthenticationService authenticationService;
+    private final MemberService memberService;
+    private final GatheringService gatheringService;
 
-    public ParticipantService(ParticipantRepository participantRepository, MemberRepository memberRepository, GatheringRepository gatheringRepository) {
+    public ParticipantService(ParticipantRepository participantRepository, AuthenticationService authenticationService, MemberService memberService, GatheringService gatheringService) {
         this.participantRepository = participantRepository;
-        this.memberRepository = memberRepository;
-        this.gatheringRepository = gatheringRepository;
+        this.authenticationService = authenticationService;
+        this.memberService = memberService;
+        this.gatheringService = gatheringService;
     }
 
     @Transactional
-    public ParticipantResponse registerParticipant(ParticipantRequest participantRequest) {
-        Member member = memberRepository.findById(participantRequest.getMemberId()).orElseThrow(
-                () -> new IllegalArgumentException("Member not found")
-        );
-        Gathering gathering = gatheringRepository.findById(participantRequest.getGatheringId()).orElseThrow(
-                () -> new IllegalArgumentException("Gathering not found")
-        );
+    public void registerLeaderParticipant(Long memberId, Long gatheringId) {
+        memberService.getMember(memberId);
+        gatheringService.getGathering(gatheringId);
 
-        Participant participant = participantRequest.toEntity(member, gathering);
+        Participant participant = Participant.ofLeader(memberId, gatheringId);
 
         participantRepository.save(participant);
+    }
+
+    @Transactional
+    public ParticipantResponse registerMemberParticipant(ParticipantRequest participantRequest) {
+        GatheringResponse gatheringResponse = gatheringService.getGathering(participantRequest.getGatheringId());
+
+        Long gatheringOwnerId = gatheringResponse.getOwnerId();
+        Long memberId = authenticationService.getAuthenticatedMemberId();
+
+        if (!memberId.equals(gatheringOwnerId)) {
+            throw new IllegalArgumentException("모임의 리더만 해당 모임의 멤버를 승인할 수 있습니다.");
+        }
+
+        else if (memberId.equals(participantRequest.getMemberId())) {
+            throw new IllegalArgumentException("가입 승인을 하려는 사용자와 모임에 참여하려는 사용자가 일치합니다.");
+        }
+
+        memberService.getMember(memberId);
+        memberService.getMember(participantRequest.getMemberId());
+
+        Participant participant = participantRequest.toEntity();
+        participantRepository.save(participant);
+
+        gatheringService.joinGatheringForMember(participantRequest.getGatheringId());
 
         return ParticipantResponse.from(participant);
     }
@@ -53,7 +75,7 @@ public class ParticipantService {
     @Transactional(readOnly = true)
     public ParticipantResponse getParticipant(Long id) {
         Participant participant = participantRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Participant not found")
+                () -> new IllegalArgumentException("찾고자하는 참여자가 존재하지 않습니다.")
         );
 
         return ParticipantResponse.from(participant);
@@ -62,7 +84,7 @@ public class ParticipantService {
     @Transactional
     public void deleteParticipant(Long id) {
         Participant participant = participantRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("Participant not found")
+                () -> new IllegalArgumentException("삭제하려는 참여자가 존재하지 않습니다.")
         );
 
         participantRepository.delete(participant);
