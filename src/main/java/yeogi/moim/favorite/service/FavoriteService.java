@@ -3,7 +3,6 @@ package yeogi.moim.favorite.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yeogi.moim.authentication.service.AuthenticationService;
-import yeogi.moim.gathering.dto.GatheringResponse;
 import yeogi.moim.gathering.service.GatheringService;
 import yeogi.moim.favorite.dto.FavoriteRequest;
 import yeogi.moim.favorite.dto.FavoriteResponse;
@@ -30,24 +29,25 @@ public class FavoriteService {
     }
 
     @Transactional
-    public FavoriteResponse addFavorite(FavoriteRequest favoriteRequest) {
+    public FavoriteResponse toggleFavorite(FavoriteRequest favoriteRequest) {
         Long userId = favoriteRequest.getUserId();
         Long gatheringId = favoriteRequest.getGatheringId();
 
         authenticationService.authorizeMember(userId);
         gatheringService.getGathering(gatheringId);
 
-        Favorite favoriteGathering = favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId);
+        Favorite favorite = favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId);
 
-        if (favoriteGathering != null) {
-            throw new IllegalArgumentException("이미 좋아요 누른 모임입니다.");
+        if (favorite != null) {
+            favoriteRepository.delete(favorite);
+            return null;
         }
 
-        Favorite favorite = favoriteRequest.toEntity();
+        Favorite newFavorite = favoriteRequest.toEntity();
 
-        favoriteRepository.save(favorite);
+        favoriteRepository.save(newFavorite);
 
-        return FavoriteResponse.from(favorite);
+        return FavoriteResponse.from(newFavorite);
     }
 
     @Transactional(readOnly = true)
@@ -61,16 +61,4 @@ public class FavoriteService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public void deleteFavorite(Long id) {
-        Long userId = authenticationService.getAuthenticatedMemberId();
-
-        memberService.getMember(userId);
-
-        favoriteRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("삭제할 좋아요가 없습니다.")
-        );
-
-        favoriteRepository.deleteById(id);
-    }
 }

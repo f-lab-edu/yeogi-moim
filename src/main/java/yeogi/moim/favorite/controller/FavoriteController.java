@@ -25,8 +25,8 @@ public class FavoriteController {
     }
 
     @PostMapping
-    public FavoriteResponse addFavorite(@RequestBody FavoriteRequest favoriteRequest) {
-        return favoriteService.addFavorite(favoriteRequest);
+    public FavoriteResponse toggleFavorite(@RequestBody FavoriteRequest favoriteRequest) {
+        return favoriteService.toggleFavorite(favoriteRequest);
     }
 
     @GetMapping
@@ -34,8 +34,4 @@ public class FavoriteController {
         return favoriteService.getFavoriteList();
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteFavorite(@PathVariable Long id) {
-        favoriteService.deleteFavorite(id);
-    }
 }
