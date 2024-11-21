@@ -3,6 +3,7 @@ package yeogi.moim.favorite.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yeogi.moim.authentication.service.AuthenticationService;
+import yeogi.moim.gathering.dto.GatheringResponse;
 import yeogi.moim.gathering.service.GatheringService;
 import yeogi.moim.favorite.dto.FavoriteRequest;
 import yeogi.moim.favorite.dto.FavoriteResponse;
@@ -47,7 +48,9 @@ public class FavoriteService {
 
         favoriteRepository.save(newFavorite);
 
-        return FavoriteResponse.from(newFavorite);
+        GatheringResponse gatheringResponse = gatheringService.getGathering(gatheringId);
+
+        return FavoriteResponse.fromFavoriteGathering(newFavorite, gatheringResponse.getTitle(), gatheringResponse.getDescription());
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +60,10 @@ public class FavoriteService {
         memberService.getMember(userId);
 
         return favoriteRepository.findByUserId(userId).stream()
-                .map(FavoriteResponse::from)
+                .map(favorite -> {
+                    GatheringResponse gatheringResponse = gatheringService.getGathering(favorite.getGatheringId());
+                    return FavoriteResponse.fromFavoriteGathering(favorite, gatheringResponse.getTitle(), gatheringResponse.getDescription());
+                })
                 .collect(Collectors.toList());
     }
 

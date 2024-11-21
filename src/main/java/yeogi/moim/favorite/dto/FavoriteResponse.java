@@ -9,19 +9,25 @@ public class FavoriteResponse {
     private Long id;
     private Long userId;
     private Long gatheringId;
+    private String gatheringTitle;
+    private String gatheringDescription;
 
     @Builder
-    public FavoriteResponse(Long id, Long userId, Long gatheringId) {
+    public FavoriteResponse(Long id, Long userId, Long gatheringId, String gatheringTitle, String gatheringDescription) {
         this.id = id;
         this.userId = userId;
         this.gatheringId = gatheringId;
+        this.gatheringTitle = gatheringTitle;
+        this.gatheringDescription = gatheringDescription;
     }
 
-    public static FavoriteResponse from(Favorite favorite) {
+    public static FavoriteResponse fromFavoriteGathering(Favorite favorite, String title, String description) {
         return FavoriteResponse.builder()
                 .id(favorite.getId())
-                .gatheringId(favorite.getGatheringId())
                 .userId(favorite.getUserId())
+                .gatheringId(favorite.getGatheringId())
+                .gatheringTitle(title)
+                .gatheringDescription(description)
                 .build();
     }
 
