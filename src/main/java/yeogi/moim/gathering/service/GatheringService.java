@@ -24,12 +24,12 @@ public class GatheringService {
     }
 
     @Transactional
-    public Gathering registerGathering(GatheringRequest gatheringRequest, Long gatheringOwnerId) {
+    public GatheringResponse registerGatheringAsALeader(GatheringRequest gatheringRequest, Long gatheringOwnerId) {
         Gathering gathering = gatheringRequest.toEntity(gatheringOwnerId);
 
         gatheringRepository.save(gathering);
 
-        return gathering;
+        return GatheringResponse.from(gathering);
     }
 
     @Transactional(readOnly = true)
