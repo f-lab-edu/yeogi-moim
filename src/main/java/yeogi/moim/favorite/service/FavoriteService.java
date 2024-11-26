@@ -60,11 +60,17 @@ public class FavoriteService {
         memberService.getMember(userId);
 
         return favoriteRepository.findByUserId(userId).stream()
-                .map(favorite -> {
-                    GatheringResponse gatheringResponse = gatheringService.getGathering(favorite.getGatheringId());
-                    return FavoriteResponse.fromFavoriteGathering(favorite, gatheringResponse.getTitle(), gatheringResponse.getDescription());
-                })
-                .collect(Collectors.toList());
+                .map(this::convertToFavoriteResponse)
+                .toList();
+    }
+
+    private FavoriteResponse convertToFavoriteResponse(Favorite favorite) {
+        GatheringResponse gatheringResponse = gatheringService.getGathering(favorite.getGatheringId());
+        return FavoriteResponse.fromFavoriteGathering(
+                favorite,
+                gatheringResponse.getTitle(),
+                gatheringResponse.getDescription()
+        );
     }
 
 }
