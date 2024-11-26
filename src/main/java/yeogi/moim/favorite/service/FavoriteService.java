@@ -40,7 +40,7 @@ public class FavoriteService {
         Favorite favorite = favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId);
 
         if (favorite != null) {
-            favoriteRepository.delete(favorite);
+            favorite.toggleFavorite();
             return null;
         }
 

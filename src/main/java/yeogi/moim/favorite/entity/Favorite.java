@@ -24,9 +24,17 @@ public class Favorite {
     @Column(nullable = false)
     private Long gatheringId;
 
-    public Favorite(Long userId, Long gatheringId) {
+    @Column(nullable = false)
+    private Boolean isFavorite;
+
+    public Favorite(Long userId, Long gatheringId, Boolean isFavorite) {
         this.userId = userId;
         this.gatheringId = gatheringId;
+        this.isFavorite = isFavorite;
+    }
+
+    public void toggleFavorite() {
+        isFavorite = !isFavorite;
     }
 
 }
