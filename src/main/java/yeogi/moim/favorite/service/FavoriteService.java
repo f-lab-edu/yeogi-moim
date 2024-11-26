@@ -12,7 +12,6 @@ import yeogi.moim.favorite.repository.FavoriteRepository;
 import yeogi.moim.member.service.MemberService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FavoriteService {
