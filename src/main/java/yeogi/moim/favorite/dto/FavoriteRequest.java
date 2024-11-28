@@ -7,7 +7,6 @@ import yeogi.moim.favorite.entity.Favorite;
 public class FavoriteRequest {
     private Long userId;
     private Long gatheringId;
-    private Long favoriteId;
 
     public Favorite toEntity() {
         return new Favorite(userId, gatheringId, true);
