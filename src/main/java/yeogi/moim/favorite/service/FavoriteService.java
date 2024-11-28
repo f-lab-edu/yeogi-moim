@@ -56,18 +56,13 @@ public class FavoriteService {
 
         memberService.getMember(userId);
 
-        return favoriteRepository.findByUserId(userId).stream()
-                .map(this::convertToFavoriteResponse)
-                .toList();
+        return favoriteRepository.findByUserIdWithGathering(userId);
     }
 
-    private FavoriteResponse convertToFavoriteResponse(Favorite favorite) {
-        GatheringResponse gatheringResponse = gatheringService.getGathering(favorite.getGatheringId());
-        return FavoriteResponse.fromFavoriteGathering(
-                favorite,
-                gatheringResponse.getTitle(),
-                gatheringResponse.getDescription()
-        );
+    private void registerFavorite(FavoriteRequest favoriteRequest) {
+        Favorite favorite = favoriteRequest.toEntity();
+
+        favoriteRepository.save(favorite);
     }
 
 }

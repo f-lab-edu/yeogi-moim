@@ -34,4 +34,18 @@ public class FavoriteRepositoryCustomImpl implements FavoriteRepositoryCustom {
     }
 
     @Override
+    public List<FavoriteResponse> findByUserIdWithGathering(Long userId) {
+        return queryFactory.select(Projections.constructor(FavoriteResponse.class,
+                        favorite.id,
+                        favorite.userId,
+                        favorite.gatheringId,
+                        favorite.isFavorite,
+                        gathering.title,
+                        gathering.description
+                ))
+                .from(favorite)
+                .leftJoin(gathering).on(favorite.gatheringId.eq(gathering.id))
+                .where(favorite.userId.eq(userId))
+                .fetch();
+    }
 }
