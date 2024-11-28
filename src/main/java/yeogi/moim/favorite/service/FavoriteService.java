@@ -20,36 +20,34 @@ public class FavoriteService {
     private final AuthenticationService authenticationService;
     private final GatheringService gatheringService;
     private final MemberService memberService;
+    private final GetFavoriteCountService getFavoriteCountService;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, AuthenticationService authenticationService, GatheringService gatheringService, MemberService memberService) {
+    public FavoriteService(FavoriteRepository favoriteRepository, AuthenticationService authenticationService, GatheringService gatheringService, MemberService memberService, GetFavoriteCountService getFavoriteCountService) {
         this.favoriteRepository = favoriteRepository;
         this.authenticationService = authenticationService;
         this.gatheringService = gatheringService;
         this.memberService = memberService;
+        this.getFavoriteCountService = getFavoriteCountService;
     }
 
     @Transactional
-    public FavoriteResponse toggleFavorite(FavoriteRequest favoriteRequest) {
+    public Long toggleFavorite(FavoriteRequest favoriteRequest) {
         Long userId = favoriteRequest.getUserId();
         Long gatheringId = favoriteRequest.getGatheringId();
 
         authenticationService.authorizeMember(userId);
         gatheringService.getGathering(gatheringId);
 
-        Favorite favorite = favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId);
+        return favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId)
+                .map(favorite -> {
+                    favorite.toggleFavorite();
+                    return getFavoriteCountService.getFavoriteCount(gatheringId);
+                })
 
-        if (favorite != null) {
-            favorite.toggleFavorite();
-            return null;
-        }
-
-        Favorite newFavorite = favoriteRequest.toEntity();
-
-        favoriteRepository.save(newFavorite);
-
-        GatheringResponse gatheringResponse = gatheringService.getGathering(gatheringId);
-
-        return FavoriteResponse.fromFavoriteGathering(newFavorite, gatheringResponse.getTitle(), gatheringResponse.getDescription());
+                .orElseGet(() -> {
+                    registerFavorite(favoriteRequest);
+                    return getFavoriteCountService.getFavoriteCount(gatheringId);
+                });
     }
 
     @Transactional(readOnly = true)
