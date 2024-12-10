@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import yeogi.moim.authentication.service.AuthenticationService;
 import yeogi.moim.gathering.dto.GatheringRequest;
 import yeogi.moim.gathering.dto.GatheringResponse;
-import yeogi.moim.gathering.entity.Gathering;
 import yeogi.moim.member.service.MemberService;
 import yeogi.moim.participant.service.ParticipantService;
 
@@ -29,10 +28,10 @@ public class RegisterGatheringService {
         Long memberId = authenticationService.getAuthenticatedMemberId();
         memberService.getMember(memberId);
 
-        Gathering gathering = gatheringService.registerGathering(gatheringRequest, memberId);
+        GatheringResponse gatheringResponse = gatheringService.registerGatheringAsALeader(gatheringRequest, memberId);
 
-        participantService.registerLeaderParticipant(memberId, gathering.getId());
+        participantService.registerLeaderParticipant(memberId, gatheringResponse.getId());
 
-        return GatheringResponse.from(gathering);
+        return gatheringResponse;
     }
 }

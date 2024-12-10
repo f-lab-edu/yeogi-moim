@@ -12,7 +12,6 @@ import yeogi.moim.favorite.repository.FavoriteRepository;
 import yeogi.moim.member.service.MemberService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FavoriteService {
@@ -21,33 +20,34 @@ public class FavoriteService {
     private final AuthenticationService authenticationService;
     private final GatheringService gatheringService;
     private final MemberService memberService;
+    private final GetFavoriteCountService getFavoriteCountService;
 
-    public FavoriteService(FavoriteRepository favoriteRepository, AuthenticationService authenticationService, GatheringService gatheringService, MemberService memberService) {
+    public FavoriteService(FavoriteRepository favoriteRepository, AuthenticationService authenticationService, GatheringService gatheringService, MemberService memberService, GetFavoriteCountService getFavoriteCountService) {
         this.favoriteRepository = favoriteRepository;
         this.authenticationService = authenticationService;
         this.gatheringService = gatheringService;
         this.memberService = memberService;
+        this.getFavoriteCountService = getFavoriteCountService;
     }
 
     @Transactional
-    public FavoriteResponse addFavorite(FavoriteRequest favoriteRequest) {
+    public Long toggleFavorite(FavoriteRequest favoriteRequest) {
         Long userId = favoriteRequest.getUserId();
         Long gatheringId = favoriteRequest.getGatheringId();
 
         authenticationService.authorizeMember(userId);
         gatheringService.getGathering(gatheringId);
 
-        Favorite favoriteGathering = favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId);
+        return favoriteRepository.findByUserIdAndGatheringId(userId, gatheringId)
+                .map(favorite -> {
+                    favorite.toggleFavorite();
+                    return getFavoriteCountService.getFavoriteCount(gatheringId);
+                })
 
-        if (favoriteGathering != null) {
-            throw new IllegalArgumentException("이미 좋아요 누른 모임입니다.");
-        }
-
-        Favorite favorite = favoriteRequest.toEntity();
-
-        favoriteRepository.save(favorite);
-
-        return FavoriteResponse.from(favorite);
+                .orElseGet(() -> {
+                    registerFavorite(favoriteRequest);
+                    return getFavoriteCountService.getFavoriteCount(gatheringId);
+                });
     }
 
     @Transactional(readOnly = true)
@@ -56,21 +56,13 @@ public class FavoriteService {
 
         memberService.getMember(userId);
 
-        return favoriteRepository.findByUserId(userId).stream()
-                .map(FavoriteResponse::from)
-                .collect(Collectors.toList());
+        return favoriteRepository.findByUserIdWithGathering(userId);
     }
 
-    @Transactional
-    public void deleteFavorite(Long id) {
-        Long userId = authenticationService.getAuthenticatedMemberId();
+    private void registerFavorite(FavoriteRequest favoriteRequest) {
+        Favorite favorite = favoriteRequest.toEntity();
 
-        memberService.getMember(userId);
-
-        favoriteRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("삭제할 좋아요가 없습니다.")
-        );
-
-        favoriteRepository.deleteById(id);
+        favoriteRepository.save(favorite);
     }
+
 }

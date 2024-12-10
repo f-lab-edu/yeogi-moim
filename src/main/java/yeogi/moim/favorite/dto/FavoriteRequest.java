@@ -9,6 +9,6 @@ public class FavoriteRequest {
     private Long gatheringId;
 
     public Favorite toEntity() {
-        return new Favorite(userId, gatheringId);
+        return new Favorite(userId, gatheringId, true);
     }
 }
